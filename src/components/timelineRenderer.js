@@ -20,8 +20,11 @@ export function renderTimeline(routeData, containerEl) {
   const htmlContent = `
     <div class="clean-timeline-card glass-panel">
       <div class="timeline-header-row">
-        <span class="timeline-title">Route Breakdown</span>
-        <span class="timeline-status-badge">🟢 Live pünktlich</span>
+        <span class="timeline-title">
+          <span class="db-logo-box" style="font-size: 0.75rem; padding: 1px 5px;">DB</span>
+          Reiseverlauf & Umstieg
+        </span>
+        <span class="timeline-status-badge">🟢 Pünktlich</span>
       </div>
       
       <div class="clean-steps-list">

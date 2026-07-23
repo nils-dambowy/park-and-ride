@@ -3,15 +3,15 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Park & Ride / Bike & Ride Calculator | Minimalist Intermodal Planner</title>
-  <meta name="description" content="Minimalistische, blitzschnelle intermodale Routenplanung (P+R / B+R) mit Echtzeit-Stau, ÖPNV DB Navigator Itinerary und CO₂-Rechner." />
+  <title>DB Navigator P+R | Intermodale Routenplanung</title>
+  <meta name="description" content="Offizielle intermodale P+R und B+R Routenplanung im DB Navigator Design." />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="manifest" href="/manifest.json" />
 
   <!-- Google Fonts (Inter) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <!-- Leaflet Map CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
@@ -19,21 +19,18 @@
   <!-- App CSS -->
   <link rel="stylesheet" href="/src/style.css" />
 </head>
-<body>
+<body class="db-theme">
   <!-- Global Route Calculation Loading Banner -->
   <div id="global-loading-banner" class="loading-banner" style="display: none;">
     <div class="spinner-small"></div>
-    <span id="loading-banner-text">Berechne intermodale Route...</span>
+    <span id="loading-banner-text">Verbindung suchen...</span>
   </div>
 
-  <!-- App Header -->
+  <!-- DB Navigator Header -->
   <header class="app-header">
     <div class="brand-title">
-      <svg width="22" height="22" viewBox="0 0 100 100" fill="none">
-        <rect width="100" height="100" rx="24" fill="#8b5cf6"/>
-        <circle cx="50" cy="50" r="24" fill="#fff"/>
-      </svg>
-      <span class="brand-name">P+R Calculator</span>
+      <div class="db-logo-box">DB</div>
+      <span class="brand-name">Navigator P+R</span>
     </div>
 
     <nav class="header-nav">
@@ -50,16 +47,16 @@
     <!-- Left Sidebar Search Panel -->
     <aside class="search-sidebar glass-panel">
       <div class="sidebar-header">
-        <h1>Routenplaner</h1>
-        <p class="subtitle">1. Meile + ÖPNV-Hauptstrecke verknüpfen</p>
+        <h1>Reiseplanung</h1>
+        <p class="subtitle">1. Meile (Auto/Rad) + ÖPNV-Hauptstrecke</p>
       </div>
 
       <form id="route-planner-form">
         <!-- Start Location -->
         <div class="form-group">
-          <label for="origin-input">📍 Start (1. Meile)</label>
+          <label for="origin-input">Von (Startadresse)</label>
           <div class="input-with-btn">
-            <input type="text" id="origin-input" class="form-control" placeholder="Startadresse oder Ort eingeben..." required />
+            <input type="text" id="origin-input" class="form-control" placeholder="Startadresse oder Haltestelle..." required />
             <button type="button" class="btn-icon" id="voice-search-btn" title="Spracheingabe">🎙️</button>
           </div>
           <div id="origin-autocomplete" class="autocomplete-container"></div>
@@ -67,14 +64,14 @@
 
         <!-- Destination Location -->
         <div class="form-group">
-          <label for="dest-input">🏁 Ziel</label>
+          <label for="dest-input">Nach (Zielbahnhof)</label>
           <input type="text" id="dest-input" class="form-control" placeholder="Zielbahnhof oder Adresse..." required />
           <div id="dest-autocomplete" class="autocomplete-container"></div>
         </div>
 
         <!-- Mode Segmented Control -->
         <div class="form-group">
-          <label>Fortbewegung (1. Meile)</label>
+          <label>Zubringer (1. Meile)</label>
           <div class="mode-segmented-control" id="mode-selector">
             <button type="button" class="mode-btn active" data-mode="smart">✨ Smart</button>
             <button type="button" class="mode-btn" data-mode="car_pt">🚗 Auto</button>
@@ -87,18 +84,18 @@
         <div class="form-group checkbox-group">
           <label class="toggle-switch">
             <input type="checkbox" id="traffic-toggle" checked />
-            <span>🚗 Live-Verkehr & Stau einberechnen</span>
+            <span>🚗 Live-Verkehr berücksichtigen</span>
           </label>
         </div>
 
-        <button type="submit" class="btn btn-primary btn-block" id="calculate-btn">
-          Route berechnen
+        <button type="submit" class="btn btn-db-red btn-block" id="calculate-btn">
+          Verbindung suchen
         </button>
       </form>
 
       <!-- Quick Preset Selection -->
       <div class="presets-section">
-        <span class="presets-label">Schnellauswahl:</span>
+        <span class="presets-label">Direktverbindungen:</span>
         <div class="presets-row" id="presets-container"></div>
       </div>
     </aside>
@@ -133,7 +130,7 @@
 
   <!-- App Footer -->
   <footer class="app-footer">
-    <span>Park & Ride / Bike & Ride Calculator &copy; 2026</span>
+    <span>DB Navigator P+R Calculator &copy; 2026</span>
     <div class="system-status-badge" id="footer-system-status">
       <span class="status-dot dot-green"></span>
       <span>System Status: 100% Operational</span>
