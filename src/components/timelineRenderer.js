@@ -7,14 +7,6 @@ export function renderTimeline(routeData, containerEl) {
   const tr = routeData.transitLeg;
   const lm = routeData.lastMile;
 
-  const modeIcon = fm.mode === 'car' ? '🚗' : fm.mode === 'bike' ? '🚲' : '🚶';
-  const modeColor = fm.mode === 'car' ? '#3b82f6' : fm.mode === 'bike' ? '#10b981' : '#9ca3af';
-
-  // Safe Traffic Badge
-  const trafficBadgeText = fm.trafficData?.trafficInfo?.badge || '🚗 Live-Stau Check';
-  const hasTrafficDelay = fm.trafficData?.delayMinutes > 0;
-
-  // DB Navigator Style Intermediate Stopovers
   const stopoversList = tr.stopovers && tr.stopovers.length > 0 ? tr.stopovers : [
     { time: tr.departureTime, station: tr.fromHub, platform: tr.platform || "Gleis 3", type: "dep" },
     { time: "08:18", station: "Darmstadt Nord", platform: "Gleis 1", type: "stop" },
@@ -26,108 +18,85 @@ export function renderTimeline(routeData, containerEl) {
   ];
 
   const htmlContent = `
-    <div class="timeline-container glass-panel">
-      <div class="db-app-header-badge">
-        <span class="db-logo-chip">DB NAVIGATOR STYLE</span>
-        <span class="live-status-chip">🟢 Live & Pünktlich</span>
+    <div class="clean-timeline-card glass-panel">
+      <div class="timeline-header-row">
+        <span class="timeline-title">Route Breakdown</span>
+        <span class="timeline-status-badge">🟢 Live pünktlich</span>
       </div>
-      <h3 class="timeline-header" style="margin-top: 8px;">Detaillierte Schritt-für-Schritt Routenführung</h3>
       
-      <div class="timeline-steps">
+      <div class="clean-steps-list">
         <!-- Step 1: First Mile -->
-        <div class="timeline-step">
-          <div class="step-badge" style="background-color: ${modeColor}">
-            ${modeIcon}
+        <div class="clean-step-item">
+          <div class="step-dot-container">
+            <span class="clean-dot dot-car"></span>
+            <span class="clean-line"></span>
           </div>
-          <div class="step-content">
-            <div class="step-title-row">
-              <span class="step-title">1. Erste Meile: ${fm.modeBadge}</span>
-              <span class="step-duration">${formatTime(fm.adjustedDurationMin)} (${fm.distanceKm} km)</span>
+          <div class="step-details">
+            <div class="step-top-line">
+              <span class="step-mode-tag">${fm.modeBadge}</span>
+              <span class="step-time-text">${formatTime(fm.adjustedDurationMin)} (${fm.distanceKm} km)</span>
             </div>
-            <div class="step-address-box">
-              <span class="addr-label">📍 Startadresse:</span> <b>${fm.startAddress}</b><br/>
-              <span class="addr-label">🚉 Ziel-Bahnhof (P+R):</span> <b>${routeData.hubName}</b> (${routeData.hubAddress})
-            </div>
-            ${hasTrafficDelay ? `<div class="traffic-warning-chip">🚗 Live-Verkehr: +${fm.trafficData.delayMinutes} Min. Fahrzeitverlängerung auf der Zubringerstraße</div>` : `<div class="traffic-ok-chip">${trafficBadgeText}</div>`}
-            <div class="buffer-badge">⏱️ Pufferzeit am Umstiegsknoten: <b>${fm.bufferLabel}</b></div>
-          </div>
-        </div>
-
-        <!-- Step 2: Main Transit Leg (DB Navigator Style Card) -->
-        <div class="timeline-step">
-          <div class="step-badge" style="background-color: #8b5cf6">
-            🚆
-          </div>
-          <div class="step-content db-train-card">
-            <div class="step-title-row">
-              <span class="step-title text-purple">2. ÖPNV Hauptstrecke: ${tr.lineName} (${tr.operator})</span>
-              <span class="step-duration">${formatTime(tr.durationMinutes)}</span>
-            </div>
-
-            <!-- DB Train Info Badge -->
-            <div class="db-train-meta">
-              <span class="db-train-badge">${tr.productName || 'Regional-Express'} ${tr.lineName}</span>
-              <span class="db-trip-id">Fahrt-ID: <code>${tr.tripId || 'Zug 28741'}</code></span>
-              <span class="chip chip-purple">🎫 ${routeData.ticketInfo.deutschlandticketNote}</span>
-            </div>
-
-            <!-- DB Style Stopover Timeline -->
-            <div class="db-stopovers-container">
-              <div class="db-stop-row dep-row">
-                <span class="db-stop-time">${tr.departureTime} Uhr</span>
-                <span class="db-stop-dot dot-dep"></span>
-                <div class="db-stop-name">
-                  <b>${tr.fromHub}</b>
-                  <span class="db-platform">${tr.platform || 'Gleis 3'}</span>
-                </div>
-              </div>
-
-              <!-- Accordion Trigger for Intermediate Stops -->
-              <details class="db-intermediate-stops-details" open>
-                <summary class="db-stops-summary">${stopoversList.length - 2} Zwischenhalte anzeigen</summary>
-                <div class="db-stops-list">
-                  ${stopoversList.slice(1, -1).map(s => `
-                    <div class="db-stop-row stop-row">
-                      <span class="db-stop-time">${s.time}</span>
-                      <span class="db-stop-dot dot-stop"></span>
-                      <div class="db-stop-name">
-                        ${s.station}
-                        <span class="db-platform-sub">${s.platform}</span>
-                      </div>
-                    </div>
-                  `).join('')}
-                </div>
-              </details>
-
-              <div class="db-stop-row arr-row">
-                <span class="db-stop-time">${tr.arrivalTime} Uhr</span>
-                <span class="db-stop-dot dot-arr"></span>
-                <div class="db-stop-name">
-                  <b>${tr.toHub}</b>
-                  <span class="db-platform">${tr.arrPlatform || 'Gleis 1a'}</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="transit-chip-row" style="margin-top: 10px;">
-              <span class="chip">🅿️ P+R Parken: ${routeData.ticketInfo.prParkingFee}</span>
-              <span class="chip">🚲 Fahrrad-Box: ${routeData.ticketInfo.brBoxFee}</span>
+            <div class="step-route-text">
+              <span>📍 ${fm.startAddress}</span>
+              <span class="arrow">→</span>
+              <span>🚉 <b>${routeData.hubName}</b></span>
             </div>
           </div>
         </div>
 
-        <!-- Step 3: Last Mile -->
-        <div class="timeline-step">
-          <div class="step-badge" style="background-color: #9ca3af">
-            🚶
+        <!-- Step 2: Main ÖPNV Transit Leg -->
+        <div class="clean-step-item">
+          <div class="step-dot-container">
+            <span class="clean-dot dot-train"></span>
+            <span class="clean-line"></span>
           </div>
-          <div class="step-content">
-            <div class="step-title-row">
-              <span class="step-title">3. Letzte Meile: Fußweg zum Ziel</span>
-              <span class="step-duration">${formatTime(lm.durationMinutes)} (${lm.distanceKm} km)</span>
+          <div class="step-details highlight-train-box">
+            <div class="step-top-line">
+              <span class="step-mode-tag tag-purple">🚆 ${tr.lineName}</span>
+              <span class="step-time-text">${formatTime(tr.durationMinutes)}</span>
             </div>
-            <div class="step-address-box">
-              <span class="addr-label">🏁 Endadresse:</span> <b>${lm.destAddress}</b>
+            
+            <div class="train-schedule-row">
+              <div class="sch-item">
+                <span class="sch-time">${tr.departureTime} Uhr</span>
+                <span class="sch-station"><b>${tr.fromHub}</b></span>
+                <span class="sch-platform">${tr.platform || 'Gleis 3'}</span>
+              </div>
+              <div class="sch-arrow">→</div>
+              <div class="sch-item">
+                <span class="sch-time">${tr.arrivalTime} Uhr</span>
+                <span class="sch-station"><b>${tr.toHub}</b></span>
+                <span class="sch-platform">${tr.arrPlatform || 'Gleis 1a'}</span>
+              </div>
+            </div>
+
+            <details class="clean-stops-details">
+              <summary class="clean-stops-summary">${stopoversList.length - 2} Zwischenhalte anzeigen</summary>
+              <div class="clean-stops-sublist">
+                ${stopoversList.slice(1, -1).map(s => `
+                  <div class="clean-substop-row">
+                    <span class="substop-time">${s.time}</span>
+                    <span class="substop-name">${s.station}</span>
+                    <span class="substop-platform">${s.platform}</span>
+                  </div>
+                `).join('')}
+              </div>
+            </details>
+          </div>
+        </div>
+
+        <!-- Step 3: Last Mile Walking -->
+        <div class="clean-step-item">
+          <div class="step-dot-container">
+            <span class="clean-dot dot-walk"></span>
+          </div>
+          <div class="step-details">
+            <div class="step-top-line">
+              <span class="step-mode-tag">🚶 Fußweg</span>
+              <span class="step-time-text">${formatTime(lm.durationMinutes)} (${lm.distanceKm} km)</span>
+            </div>
+            <div class="step-route-text">
+              <span>🏁 <b>${lm.destAddress}</b></span>
             </div>
           </div>
         </div>

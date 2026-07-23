@@ -4,31 +4,28 @@ export function renderOverviewDashboard(routeData, containerEl) {
   if (!containerEl || !routeData) return;
 
   const html = `
-    <div class="overview-dashboard-card">
-      <div class="kpi-grid">
-        <div class="kpi-item">
-          <span class="kpi-label">⏱️ Gesamtreisezeit</span>
-          <span class="kpi-value highlight-purple">${formatTime(routeData.totalDurationMinutes)}</span>
-          <span class="kpi-sub font-green">-${routeData.timeSavedMinutes} Min. schneller als Stau</span>
-        </div>
+    <div class="minimal-summary-bar glass-panel">
+      <div class="summary-pill">
+        <span class="pill-icon">⏱️</span>
+        <span class="pill-label">Gesamtzahl</span>
+        <span class="pill-value text-purple">${formatTime(routeData.totalDurationMinutes)}</span>
+        <span class="pill-sub">(-${routeData.timeSavedMinutes} Min. vs. Stau)</span>
+      </div>
 
-        <div class="kpi-item">
-          <span class="kpi-label">🌱 CO₂-Ersparnis</span>
-          <span class="kpi-value highlight-green">${formatCO2(routeData.metrics.co2SavedGram)}</span>
-          <span class="kpi-sub">vs. Reines Auto (${routeData.metrics.totalDistanceKm} km)</span>
-        </div>
+      <div class="summary-divider"></div>
 
-        <div class="kpi-item">
-          <span class="kpi-label">💰 Ersparnis (Sprit & Parken)</span>
-          <span class="kpi-value highlight-blue">${formatMoney(routeData.metrics.moneySavedEuro)}</span>
-          <span class="kpi-sub">Keine Innenstadt-Parkgebühr</span>
-        </div>
+      <div class="summary-pill">
+        <span class="pill-icon">🌿</span>
+        <span class="pill-label">CO₂-Gespart</span>
+        <span class="pill-value text-green">${formatCO2(routeData.metrics.co2SavedGram)}</span>
+      </div>
 
-        <div class="kpi-item">
-          <span class="kpi-label">🔥 Kalorien & Gesundheit</span>
-          <span class="kpi-value">${routeData.metrics.caloriesBurned} kcal</span>
-          <span class="kpi-sub">${routeData.weather.summary}</span>
-        </div>
+      <div class="summary-divider"></div>
+
+      <div class="summary-pill">
+        <span class="pill-icon">💰</span>
+        <span class="pill-label">Ersparnis</span>
+        <span class="pill-value text-blue">${formatMoney(routeData.metrics.moneySavedEuro)}</span>
       </div>
     </div>
   `;
