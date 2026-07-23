@@ -1,4 +1,4 @@
-/* Official bahn.de Clean Light Design System */
+/* Official bahn.de Clean Light Design System & Rich DB Journey Card */
 :root {
   --db-red: #ec1c24;
   --db-red-hover: #c8102e;
@@ -8,11 +8,11 @@
   --db-text-main: #0f172a;
   --db-text-muted: #64748b;
   --db-platform-bg: #f1f5f9;
-  --db-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  --db-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
   
   --font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --radius-lg: 10px;
-  --radius-md: 6px;
+  --radius-lg: 12px;
+  --radius-md: 8px;
   --radius-sm: 4px;
   --transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -68,8 +68,8 @@ body.db-theme {
 
 /* DB Navigator Header */
 .app-header {
-  height: 52px;
-  padding: 0 20px;
+  height: 54px;
+  padding: 0 24px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -91,14 +91,14 @@ body.db-theme {
   background: var(--db-red);
   color: #fff;
   font-weight: 900;
-  font-size: 0.95rem;
+  font-size: 1rem;
   padding: 2px 7px;
   border-radius: 3px;
   letter-spacing: -0.5px;
 }
 
 .brand-name {
-  font-size: 1rem;
+  font-size: 1.05rem;
   font-weight: 700;
   color: var(--db-text-main);
 }
@@ -106,16 +106,16 @@ body.db-theme {
 .header-nav {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
 }
 
 .nav-btn {
   background: transparent;
   border: none;
   color: var(--db-text-muted);
-  font-size: 0.8rem;
+  font-size: 0.82rem;
   font-weight: 500;
-  padding: 5px 10px;
+  padding: 6px 12px;
   border-radius: var(--radius-sm);
   cursor: pointer;
   transition: var(--transition);
@@ -137,16 +137,16 @@ body.db-theme {
 /* Layout Grid */
 .main-layout {
   display: grid;
-  grid-template-columns: 340px 1fr;
-  gap: 14px;
-  padding: 14px;
+  grid-template-columns: 350px 1fr;
+  gap: 16px;
+  padding: 16px;
   flex: 1;
-  max-width: 1600px;
+  max-width: 1650px;
   margin: 0 auto;
   width: 100%;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 960px) {
   .main-layout {
     grid-template-columns: 1fr;
   }
@@ -154,21 +154,21 @@ body.db-theme {
 
 /* Sidebar Search Controls */
 .search-sidebar {
-  padding: 16px;
+  padding: 18px;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 16px;
   height: fit-content;
 }
 
 .sidebar-header h1 {
-  font-size: 1.1rem;
+  font-size: 1.15rem;
   font-weight: 700;
   color: var(--db-text-main);
 }
 
 .subtitle {
-  font-size: 0.75rem;
+  font-size: 0.78rem;
   color: var(--db-text-muted);
   margin-top: 1px;
 }
@@ -176,44 +176,44 @@ body.db-theme {
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  margin-bottom: 10px;
+  gap: 5px;
+  margin-bottom: 12px;
   position: relative;
 }
 
 .form-group label {
-  font-size: 0.75rem;
+  font-size: 0.78rem;
   font-weight: 600;
   color: var(--db-text-main);
 }
 
 .input-with-btn {
   display: flex;
-  gap: 4px;
+  gap: 6px;
 }
 
 .form-control {
   width: 100%;
-  padding: 9px 12px;
+  padding: 10px 14px;
   background: #ffffff;
   border: 1px solid #cbd5e1;
   border-radius: var(--radius-md);
   color: var(--db-text-main);
-  font-size: 0.85rem;
+  font-size: 0.875rem;
   transition: var(--transition);
 }
 
 .form-control:focus {
   outline: none;
   border-color: var(--db-red);
-  box-shadow: 0 0 0 2px rgba(236, 28, 36, 0.15);
+  box-shadow: 0 0 0 3px rgba(236, 28, 36, 0.12);
 }
 
 .btn-icon {
   background: #f1f5f9;
   border: 1px solid #cbd5e1;
   border-radius: var(--radius-md);
-  padding: 0 8px;
+  padding: 0 10px;
   cursor: pointer;
   color: var(--db-text-main);
 }
@@ -230,12 +230,12 @@ body.db-theme {
 }
 
 .mode-btn {
-  padding: 6px 2px;
+  padding: 7px 2px;
   border: none;
   background: transparent;
   color: var(--db-text-muted);
   font-weight: 500;
-  font-size: 0.75rem;
+  font-size: 0.78rem;
   border-radius: var(--radius-sm);
   cursor: pointer;
   transition: var(--transition);
@@ -253,7 +253,7 @@ body.db-theme {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 0.75rem;
+  font-size: 0.78rem;
   color: var(--db-text-muted);
   cursor: pointer;
 }
@@ -262,11 +262,11 @@ body.db-theme {
 .presets-section {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
 }
 
 .presets-label {
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   color: var(--db-text-muted);
   font-weight: 600;
 }
@@ -274,15 +274,15 @@ body.db-theme {
 .presets-row {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
 }
 
 .preset-chip {
-  padding: 6px 10px;
+  padding: 8px 12px;
   background: #f8fafc;
   border: 1px solid #e2e8f0;
-  border-radius: var(--radius-sm);
-  font-size: 0.75rem;
+  border-radius: var(--radius-md);
+  font-size: 0.78rem;
   color: var(--db-text-main);
   text-align: left;
   cursor: pointer;
@@ -299,11 +299,11 @@ body.db-theme {
 .dashboard-content {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
 }
 
 .map-card {
-  height: 380px;
+  height: 400px;
   position: relative;
   overflow: hidden;
 }
@@ -320,11 +320,11 @@ body.db-theme {
 }
 
 .map-marker-pin {
-  padding: 4px 8px;
+  padding: 5px 10px;
   border-radius: 4px;
   color: #fff;
   font-weight: 700;
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
   white-space: nowrap;
 }
@@ -333,223 +333,317 @@ body.db-theme {
 .hub-pin { background: var(--db-red); border: 1px solid #fff; }
 .dest-pin { background: #16a34a; }
 
-/* Minimalist Summary Bar */
-.minimal-summary-bar {
-  padding: 12px 18px;
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-  flex-wrap: wrap;
-  gap: 12px;
-  background: var(--db-card);
-  border: 1px solid var(--db-card-border);
-}
-
-.summary-pill {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.pill-icon { font-size: 1rem; }
-.pill-label { font-size: 0.75rem; color: var(--db-text-muted); }
-.pill-value { font-size: 1.15rem; font-weight: 700; letter-spacing: -0.3px; color: var(--db-text-main); }
-.pill-sub { font-size: 0.72rem; color: #16a34a; margin-left: 2px; }
-
-.summary-divider {
-  width: 1px;
-  height: 20px;
-  background: var(--db-card-border);
-}
-
-.text-purple { color: var(--db-red); }
-.text-green { color: #16a34a; }
-.text-blue { color: #0284c7; }
-
-/* DB Navigator Style Journey Itinerary Card */
-.clean-timeline-card {
-  padding: 16px;
+/* Large & Rich DB Navigator Journey Detail Card */
+.rich-db-timeline-card {
+  padding: 24px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  background: var(--db-card);
-  border: 1px solid var(--db-card-border);
+  gap: 20px;
 }
 
-.timeline-header-row {
+.db-card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  border-bottom: 1px solid var(--db-card-border);
+  padding-bottom: 14px;
+  flex-wrap: wrap;
+  gap: 12px;
 }
 
-.timeline-title {
-  font-size: 0.9rem;
+.db-header-title-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.db-header-title-box h2 {
+  font-size: 1.15rem;
   font-weight: 700;
   color: var(--db-text-main);
-  display: flex;
-  align-items: center;
-  gap: 8px;
 }
 
-.timeline-status-badge {
-  font-size: 0.72rem;
-  color: #16a34a;
+.db-header-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.db-status-pill {
+  padding: 4px 10px;
   background: #f0fdf4;
   border: 1px solid #bbf7d0;
-  padding: 2px 8px;
-  border-radius: 10px;
+  color: #16a34a;
   font-weight: 600;
+  font-size: 0.78rem;
+  border-radius: 12px;
 }
 
-.clean-steps-list {
+.db-duration-pill {
+  padding: 4px 12px;
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  color: var(--db-text-main);
+  font-weight: 700;
+  font-size: 0.85rem;
+  border-radius: 12px;
+}
+
+/* Rich Vertical Journey Steps */
+.rich-steps-timeline {
   display: flex;
   flex-direction: column;
-  gap: 0;
+  gap: 18px;
 }
 
-.clean-step-item {
+.rich-step-row {
   display: flex;
-  gap: 12px;
+  gap: 16px;
   position: relative;
-  padding-bottom: 12px;
 }
 
-.step-dot-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 16px;
-  padding-top: 4px;
-}
-
-.clean-dot {
-  width: 10px;
-  height: 10px;
+.rich-step-badge {
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  color: #fff;
   flex-shrink: 0;
 }
 
-.dot-car { background: #0284c7; }
-.dot-train { background: var(--db-red); width: 12px; height: 12px; }
-.dot-walk { background: #64748b; }
+.bg-blue { background: #0284c7; }
+.bg-db-red { background: var(--db-red); box-shadow: 0 4px 12px rgba(236, 28, 36, 0.25); }
+.bg-gray { background: #64748b; }
 
-.clean-line {
-  width: 2px;
-  flex: 1;
-  background: #e2e8f0;
-  margin-top: 4px;
-}
-
-.step-details {
+.rich-step-body {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 10px;
+  padding: 16px;
+  background: #f8fafc;
+  border: 1px solid var(--db-card-border);
+  border-radius: var(--radius-lg);
 }
 
-.highlight-train-box {
+.db-train-detail-box {
   background: #fff5f5;
-  padding: 12px;
-  border-radius: var(--radius-md);
   border: 1px solid #fecdd3;
 }
 
-.step-top-line {
+.rich-step-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
-.step-mode-tag {
+.rich-step-number {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--db-text-main);
+}
+
+.text-db-red { color: var(--db-red); }
+
+.rich-step-metrics {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--db-text-muted);
+}
+
+.rich-address-block {
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--db-text-main);
+}
+
+.text-sub { color: var(--db-text-muted); font-size: 0.8rem; }
+
+.rich-alert-chip {
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  font-size: 0.82rem;
+}
+
+.alert-green { background: #f0fdf4; border: 1px solid #bbf7d0; color: #15803d; }
+.alert-red { background: #fef2f2; border: 1px solid #fecdd3; color: #b91c1c; }
+
+.rich-info-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.info-pill {
+  padding: 6px 12px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  color: var(--db-text-main);
+}
+
+/* DB Train Details & Schedule Box */
+.db-train-meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.db-line-tag {
+  padding: 4px 10px;
+  background: var(--db-red);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.82rem;
+  border-radius: 4px;
+}
+
+.db-meta-chip {
+  font-size: 0.8rem;
+  color: var(--db-text-muted);
+}
+
+.db-ticket-chip {
+  font-size: 0.8rem;
+  padding: 3px 8px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #15803d;
+  font-weight: 600;
+  border-radius: 12px;
+}
+
+/* Schedule Station Box */
+.db-station-schedule-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: var(--radius-md);
+  margin-top: 6px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.schedule-point {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sch-time-big {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--db-text-main);
+}
+
+.sch-station-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+}
+
+.sch-track-badge {
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  padding: 2px 6px;
+  border-radius: 4px;
   font-size: 0.78rem;
   font-weight: 700;
   color: var(--db-text-main);
 }
 
-.tag-purple { color: var(--db-red); }
-
-.step-time-text {
-  font-size: 0.75rem;
-  color: var(--db-text-muted);
-}
-
-.step-route-text {
-  font-size: 0.8rem;
-  color: var(--db-text-muted);
+.schedule-divider-line {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: 2px;
 }
 
-.step-route-text .arrow { opacity: 0.4; }
+.divider-arrow { font-size: 1.2rem; color: var(--db-red); }
+.divider-text { font-size: 0.75rem; color: var(--db-text-muted); font-weight: 600; }
 
-/* DB Train Schedule Row */
-.train-schedule-row {
+/* Accordion for Real Stopovers */
+.db-stopovers-accordion {
+  margin-top: 8px;
+  font-size: 0.85rem;
+}
+
+.db-accordion-summary {
+  color: var(--db-red);
+  font-weight: 700;
+  cursor: pointer;
+  padding: 4px 0;
+}
+
+.db-stopovers-table {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-left: 12px;
+  border-left: 3px solid var(--db-red);
+}
+
+.db-stopover-item {
   display: flex;
   align-items: center;
   gap: 12px;
   font-size: 0.85rem;
-  margin-top: 6px;
+  padding: 4px 0;
 }
 
-.sch-item {
+.stopover-time { width: 70px; font-weight: 700; color: var(--db-text-main); }
+.stopover-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--db-red); }
+.stopover-name { flex: 1; color: var(--db-text-main); }
+.stopover-track { background: #ffffff; border: 1px solid #cbd5e1; padding: 1px 6px; border-radius: 3px; font-size: 0.78rem; font-weight: 600; }
+
+/* Executive Summary Footer Bar */
+.db-executive-summary-bar {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px;
+  margin-top: 14px;
+  padding-top: 16px;
+  border-top: 1px solid var(--db-card-border);
+}
+
+.summary-card {
   display: flex;
-  align-items: center;
-  gap: 6px;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 16px;
+  background: #f8fafc;
+  border: 1px solid var(--db-card-border);
+  border-radius: var(--radius-md);
 }
 
-.sch-time { font-weight: 700; color: var(--db-text-main); }
-.sch-platform {
-  font-size: 0.72rem;
-  background: #f1f5f9;
-  border: 1px solid #cbd5e1;
-  padding: 1px 5px;
-  border-radius: 3px;
-  color: var(--db-text-main);
-  font-weight: 600;
-}
+.sc-icon { font-size: 1.4rem; }
+.sc-content { display: flex; flex-direction: column; gap: 2px; }
+.sc-label { font-size: 0.75rem; color: var(--db-text-muted); font-weight: 600; }
+.sc-val { font-size: 1.05rem; font-weight: 800; }
+.sc-sub { font-size: 0.72rem; color: var(--db-text-muted); }
 
-.sch-arrow { opacity: 0.5; font-size: 0.8rem; }
-
-.clean-stops-details {
-  margin-top: 8px;
-  font-size: 0.75rem;
-}
-
-.clean-stops-summary {
-  color: var(--db-red);
-  cursor: pointer;
-  font-weight: 600;
-}
-
-.clean-stops-sublist {
-  margin-top: 4px;
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  padding-left: 8px;
-  border-left: 2px dashed #fca5a5;
-}
-
-.clean-substop-row {
-  display: flex;
-  justify-content: space-between;
-  color: var(--db-text-muted);
-}
-
-.substop-platform {
-  background: #f1f5f9;
-  padding: 1px 4px;
-  border-radius: 3px;
-}
+.text-green { color: #16a34a; }
 
 /* DB Buttons */
 .btn {
-  padding: 8px 14px;
+  padding: 10px 16px;
   border-radius: var(--radius-md);
   border: none;
-  font-weight: 600;
-  font-size: 0.82rem;
+  font-weight: 700;
+  font-size: 0.875rem;
   cursor: pointer;
   transition: var(--transition);
   display: inline-flex;
@@ -569,7 +663,7 @@ body.db-theme {
 
 .btn-outline {
   background: #ffffff;
-  border: 1px solid var(--db-card-border);
+  border: 1px solid #cbd5e1;
   color: var(--db-text-main);
 }
 
@@ -578,24 +672,24 @@ body.db-theme {
 }
 
 .btn-block { width: 100%; }
-.btn-sm { padding: 5px 10px; font-size: 0.75rem; }
+.btn-sm { padding: 6px 12px; font-size: 0.8rem; }
 
 /* Actions Row */
 .actions-row {
   display: flex;
-  gap: 6px;
+  gap: 10px;
   flex-wrap: wrap;
 }
 
 /* Footer */
 .app-footer {
-  padding: 10px 20px;
+  padding: 14px 24px;
   border-top: 1px solid var(--db-card-border);
   background: #ffffff;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   color: var(--db-text-muted);
 }
 
@@ -613,19 +707,19 @@ body.db-theme {
   left: 0;
   right: 0;
   background: #ffffff;
-  border: 1px solid var(--db-red);
+  border: 2px solid var(--db-red);
   border-radius: var(--radius-md);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
-  max-height: 180px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  max-height: 220px;
   overflow-y: auto;
   z-index: 1500;
   display: none;
 }
 
 .autocomplete-item {
-  padding: 7px 10px;
+  padding: 9px 12px;
   cursor: pointer;
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   color: var(--db-text-main);
   border-bottom: 1px solid #f1f5f9;
 }
