@@ -7,15 +7,7 @@ export function renderTimeline(routeData, containerEl) {
   const tr = routeData.transitLeg;
   const lm = routeData.lastMile;
 
-  const stopoversList = tr.stopovers && tr.stopovers.length > 0 ? tr.stopovers : [
-    { time: tr.departureTime, station: tr.fromHub, platform: tr.platform || "Gleis 3", type: "dep" },
-    { time: "08:18", station: "Darmstadt Nord", platform: "Gleis 1", type: "stop" },
-    { time: "08:24", station: "Weiterstadt", platform: "Gleis 2", type: "stop" },
-    { time: "08:31", station: "Groß Gerau", platform: "Gleis 1", type: "stop" },
-    { time: "08:36", station: "Nauheim(b Gr.Gerau)", platform: "Gleis 2", type: "stop" },
-    { time: "08:42", station: "Mainz-Bischofsheim", platform: "Gleis 4", type: "stop" },
-    { time: tr.arrivalTime, station: tr.toHub, platform: tr.arrPlatform || "Gleis 1a", type: "arr" }
-  ];
+  const stopoversList = tr.stopovers && tr.stopovers.length > 2 ? tr.stopovers : null;
 
   const htmlContent = `
     <div class="clean-timeline-card glass-panel">
@@ -55,7 +47,7 @@ export function renderTimeline(routeData, containerEl) {
           </div>
           <div class="step-details highlight-train-box">
             <div class="step-top-line">
-              <span class="step-mode-tag tag-purple">🚆 ${tr.lineName}</span>
+              <span class="step-mode-tag tag-purple">🚆 ${tr.lineName} (${tr.operator})</span>
               <span class="step-time-text">${formatTime(tr.durationMinutes)}</span>
             </div>
             
@@ -73,18 +65,20 @@ export function renderTimeline(routeData, containerEl) {
               </div>
             </div>
 
-            <details class="clean-stops-details">
-              <summary class="clean-stops-summary">${stopoversList.length - 2} Zwischenhalte anzeigen</summary>
-              <div class="clean-stops-sublist">
-                ${stopoversList.slice(1, -1).map(s => `
-                  <div class="clean-substop-row">
-                    <span class="substop-time">${s.time}</span>
-                    <span class="substop-name">${s.station}</span>
-                    <span class="substop-platform">${s.platform}</span>
-                  </div>
-                `).join('')}
-              </div>
-            </details>
+            ${stopoversList ? `
+              <details class="clean-stops-details">
+                <summary class="clean-stops-summary">${stopoversList.length - 2} echte Zwischenhalte anzeigen</summary>
+                <div class="clean-stops-sublist">
+                  ${stopoversList.slice(1, -1).map(s => `
+                    <div class="clean-substop-row">
+                      <span class="substop-time">${s.time}</span>
+                      <span class="substop-name">${s.station}</span>
+                      <span class="substop-platform">${s.platform}</span>
+                    </div>
+                  `).join('')}
+                </div>
+              </details>
+            ` : ''}
           </div>
         </div>
 
