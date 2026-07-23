@@ -1,8 +1,6 @@
 /**
- * Leaflet Map Component Manager
- * Handles multi-colored polylines (Blue=Car, Green=Bike, Purple=ÖPNV, Gray=Walk),
- * custom SVG markers for Origin, P+R/B+R Hub, Transit Hub, Destination,
- * live traffic congestion overlays, and high-contrast outdoor mode!
+ * Leaflet Map Component Manager (Clean bahn.de Light Tiles)
+ * Renders smooth polylines matching exact GPS coordinates (Origin -> Hub -> DestHub -> Dest)
  */
 
 export class MapManager {
@@ -16,7 +14,7 @@ export class MapManager {
     this.highContrast = false;
   }
 
-  initMap(center = [52.5200, 13.4050], zoom = 11) {
+  initMap(center = [49.9000, 8.5000], zoom = 10) {
     if (!window.L) return;
 
     this.map = L.map(this.elementId, {
@@ -25,9 +23,9 @@ export class MapManager {
 
     L.control.zoom({ position: 'bottomright' }).addTo(this.map);
 
-    // Dark Mode Tiles by CartoDB
-    this.tileLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/">CARTO</a>',
+    // Official Clean Light Map Tiles by CartoDB (Voyager)
+    this.tileLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>',
       subdomains: 'abcd',
       maxZoom: 19
     }).addTo(this.map);
@@ -44,91 +42,107 @@ export class MapManager {
     this.polylinesGroup.clearLayers();
     this.trafficLayerGroup.clearLayers();
 
-    // 1. Render First Mile Polyline (Blue for Car, Green for Bike, Gray for Walk)
-    const firstMileColor = routeData.firstMile.mode === 'car' ? '#3b82f6' : routeData.firstMile.mode === 'bike' ? '#10b981' : '#9ca3af';
-    
-    if (routeData.firstMile.geometry) {
-      const firstPoly = L.polyline(routeData.firstMile.geometry, {
-        color: firstMileColor,
-        weight: 6,
-        opacity: 0.9,
-        dashArray: routeData.firstMile.mode === 'walk' ? '8, 8' : null
-      }).addTo(this.polylinesGroup);
+    const hubLat = routeData.hubCoords.lat;
+    const hubLng = routeData.hubCoords.lng;
+    const destHubLat = routeData.destHubCoords.lat;
+    const destHubLng = routeData.destHubCoords.lng;
 
-      // Render Traffic Congestion overlay if car and traffic active
-      if (routeData.firstMile.mode === 'car' && this.showTraffic && routeData.firstMile.trafficData.delayMinutes > 0) {
-        L.polyline(routeData.firstMile.geometry, {
-          color: '#ef4444',
-          weight: 10,
-          opacity: 0.4
-        }).addTo(this.trafficLayerGroup);
-      }
+    // 1. Render First Mile Polyline (Starts EXACTLY at originCoords!)
+    const firstMileCoords = routeData.firstMile.geometry && routeData.firstMile.geometry.length > 0 
+      ? routeData.firstMile.geometry 
+      : [
+          [originCoords.lat, originCoords.lng],
+          [hubLat, hubLng]
+        ];
+
+    // Ensure first point connects to originCoords
+    firstMileCoords[0] = [originCoords.lat, originCoords.lng];
+    firstMileCoords[firstMileCoords.length - 1] = [hubLat, hubLng];
+
+    const firstMileColor = routeData.firstMile.mode === 'car' ? '#0284c7' : routeData.firstMile.mode === 'bike' ? '#16a34a' : '#64748b';
+    
+    L.polyline(firstMileCoords, {
+      color: firstMileColor,
+      weight: 6,
+      opacity: 0.9,
+      dashArray: routeData.firstMile.mode === 'walk' ? '6, 6' : null
+    }).addTo(this.polylinesGroup);
+
+    // Live Traffic overlay if car
+    if (routeData.firstMile.mode === 'car' && this.showTraffic && routeData.firstMile.trafficData?.delayMinutes > 0) {
+      L.polyline(firstMileCoords, {
+        color: '#dc2626',
+        weight: 10,
+        opacity: 0.35
+      }).addTo(this.trafficLayerGroup);
     }
 
-    // 2. Render Main Transit Leg Polyline (Purple #8b5cf6)
+    // 2. Render Main ÖPNV Transit Leg Polyline (DB Crimson Red #ec1c24)
     const transitPolyline = [
-      [routeData.hubCoords.lat, routeData.hubCoords.lng],
-      [routeData.destHubCoords.lat, routeData.destHubCoords.lng]
+      [hubLat, hubLng],
+      [destHubLat, destHubLng]
     ];
     L.polyline(transitPolyline, {
-      color: '#8b5cf6',
-      weight: 6,
+      color: '#ec1c24',
+      weight: 7,
       opacity: 0.95
     }).addTo(this.polylinesGroup);
 
-    // 3. Render Last Mile Polyline (Gray #9ca3af)
-    if (routeData.lastMile.geometry) {
-      L.polyline(routeData.lastMile.geometry, {
-        color: '#9ca3af',
-        weight: 5,
-        opacity: 0.8,
-        dashArray: '6, 6'
-      }).addTo(this.polylinesGroup);
-    }
+    // 3. Render Last Mile Polyline (Dash Line)
+    const lastMileCoords = [
+      [destHubLat, destHubLng],
+      [destCoords.lat, destCoords.lng]
+    ];
+    L.polyline(lastMileCoords, {
+      color: '#64748b',
+      weight: 5,
+      opacity: 0.8,
+      dashArray: '6, 6'
+    }).addTo(this.polylinesGroup);
 
-    // 4. Custom SVG Markers
-    // Origin Marker
+    // 4. Custom Clean Map Markers
+    // Start Marker
     const originIcon = L.divIcon({
       className: 'custom-map-icon',
-      html: `<div class="map-marker-pin origin-pin"><span class="pin-icon">📍</span><span class="pin-label">Start</span></div>`,
-      iconSize: [40, 40],
-      iconAnchor: [20, 40]
+      html: `<div class="map-marker-pin origin-pin">📍 Start</div>`,
+      iconSize: [60, 26],
+      iconAnchor: [30, 26]
     });
     L.marker([originCoords.lat, originCoords.lng], { icon: originIcon })
-      .bindPopup(`<b>Startstandort</b><br>${routeData.firstMile.modeBadge}`)
+      .bindPopup(`<b>Startstandort</b><br>${routeData.startAddress}`)
       .addTo(this.markersGroup);
 
     // P+R / B+R Hub Marker
     const hubBadge = routeData.firstMile.mode === 'car' ? 'P+R' : routeData.firstMile.mode === 'bike' ? 'B+R' : 'Knoten';
     const hubIcon = L.divIcon({
       className: 'custom-map-icon',
-      html: `<div class="map-marker-pin hub-pin"><span class="pin-icon">🚉</span><span class="pin-label">${hubBadge}</span></div>`,
-      iconSize: [44, 44],
-      iconAnchor: [22, 44]
+      html: `<div class="map-marker-pin hub-pin">🚉 ${hubBadge} ${routeData.hubName.split(' ')[0]}</div>`,
+      iconSize: [110, 26],
+      iconAnchor: [55, 26]
     });
-    L.marker([routeData.hubCoords.lat, routeData.hubCoords.lng], { icon: hubIcon })
-      .bindPopup(`<b>${routeData.hubName}</b><br>Knotenpunkt | ${routeData.firstMile.bufferLabel}`)
+    L.marker([hubLat, hubLng], { icon: hubIcon })
+      .bindPopup(`<b>${routeData.hubName}</b><br>${routeData.hubAddress}`)
       .addTo(this.markersGroup);
 
-    // Destination Marker
+    // Ziel Marker
     const destIcon = L.divIcon({
       className: 'custom-map-icon',
-      html: `<div class="map-marker-pin dest-pin"><span class="pin-icon">🏁</span><span class="pin-label">Ziel</span></div>`,
-      iconSize: [40, 40],
-      iconAnchor: [20, 40]
+      html: `<div class="map-marker-pin dest-pin">🏁 Ziel</div>`,
+      iconSize: [50, 26],
+      iconAnchor: [25, 26]
     });
     L.marker([destCoords.lat, destCoords.lng], { icon: destIcon })
-      .bindPopup(`<b>Zielort</b>`)
+      .bindPopup(`<b>Zielort</b><br>${routeData.destAddress}`)
       .addTo(this.markersGroup);
 
-    // Fit map bounds to show entire route
-    const allCoords = [
+    // Fit map bounds cleanly to include all points
+    const bounds = L.latLngBounds([
       [originCoords.lat, originCoords.lng],
-      [routeData.hubCoords.lat, routeData.hubCoords.lng],
-      [routeData.destHubCoords.lat, routeData.destHubCoords.lng],
+      [hubLat, hubLng],
+      [destHubLat, destHubLng],
       [destCoords.lat, destCoords.lng]
-    ];
-    this.map.fitBounds(allCoords, { padding: [60, 60] });
+    ]);
+    this.map.fitBounds(bounds, { padding: [50, 50] });
   }
 
   toggleTraffic(show) {
@@ -140,13 +154,5 @@ export class MapManager {
 
   toggleHighContrast(enabled) {
     this.highContrast = enabled;
-    const container = document.getElementById(this.elementId);
-    if (container) {
-      if (enabled) {
-        container.classList.add('outdoor-high-contrast');
-      } else {
-        container.classList.remove('outdoor-high-contrast');
-      }
-    }
   }
 }
