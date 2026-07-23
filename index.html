@@ -3,15 +3,15 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Park & Ride / Bike & Ride Calculator | Intermodale Routenplanung</title>
-  <meta name="description" content="Schnellste Kombination aus Individualverkehr (Auto/Fahrrad) und ÖPNV (Hauptstrecke) mit Echtzeit-Stau, Wetter-Faktor und Kostenrechner." />
+  <title>Park & Ride / Bike & Ride Calculator | Minimalist Intermodal Planner</title>
+  <meta name="description" content="Minimalistische, blitzschnelle intermodale Routenplanung (P+R / B+R) mit Echtzeit-Stau, ÖPNV DB Navigator Itinerary und CO₂-Rechner." />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="manifest" href="/manifest.json" />
 
   <!-- Google Fonts (Inter) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
   <!-- Leaflet Map CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
@@ -23,109 +23,82 @@
   <!-- Global Route Calculation Loading Banner -->
   <div id="global-loading-banner" class="loading-banner" style="display: none;">
     <div class="spinner-small"></div>
-    <span id="loading-banner-text">🔍 Suche echte Bahnhöfe & berechne intermodale Route (DB HAFAS / OSRM API)...</span>
+    <span id="loading-banner-text">Berechne intermodale Route...</span>
   </div>
 
   <!-- App Header -->
   <header class="app-header">
     <div class="brand-title">
-      <svg width="28" height="28" viewBox="0 0 100 100" fill="none">
-        <rect width="100" height="100" rx="20" fill="#8b5cf6"/>
-        <path d="M25 45 C25 35, 35 25, 50 25 C65 25, 75 35, 75 45 L75 65 Z" stroke="#fff" stroke-width="8"/>
-        <circle cx="38" cy="65" r="6" fill="#10b981"/>
-        <circle cx="62" cy="65" r="6" fill="#3b82f6"/>
+      <svg width="22" height="22" viewBox="0 0 100 100" fill="none">
+        <rect width="100" height="100" rx="24" fill="#8b5cf6"/>
+        <circle cx="50" cy="50" r="24" fill="#fff"/>
       </svg>
-      <span>P+R / B+R Calculator</span>
+      <span class="brand-name">P+R Calculator</span>
     </div>
 
-    <div class="header-actions">
-      <!-- Directly Accessible Status Page Link -->
-      <button class="btn btn-outline btn-sm" id="header-status-page-btn" title="API Status Page öffnen">
-        🟢 Status Page
-      </button>
-
-      <!-- Directly Accessible Admin Dashboard Link -->
-      <button class="btn btn-outline btn-sm" id="header-admin-direct-btn" title="Admin Dashboard öffnen">
-        👑 Admin Dashboard
-      </button>
-
-      <!-- High Contrast Outdoor Toggle -->
-      <button class="btn btn-outline btn-sm" id="toggle-outdoor-mode" title="High Contrast Sonnen-Modus">
-        ☀️ Outdoor
-      </button>
-
-      <!-- Saved Routes Drawer Trigger -->
-      <button class="btn btn-outline btn-sm" id="open-saved-routes">
-        ⭐ Saved Routes
-      </button>
-
-      <!-- Auth Header Badge -->
+    <nav class="header-nav">
+      <button class="nav-btn" id="header-status-page-btn">🟢 Status</button>
+      <button class="nav-btn" id="header-admin-direct-btn">👑 Admin</button>
+      <button class="nav-btn" id="toggle-outdoor-mode">☀️ Outdoor</button>
+      <button class="nav-btn" id="open-saved-routes">⭐ Gemerkt</button>
       <div id="auth-header-btn-container"></div>
-    </div>
+    </nav>
   </header>
 
   <!-- Main Layout Grid -->
   <main class="main-layout">
-    <!-- Left Sidebar Controls -->
-    <aside class="controls-sidebar glass-panel">
-      <h2>Intermodale Routenplanung</h2>
-      <p class="text-muted" style="font-size: 0.85rem; margin-bottom: 12px;">
-        Verknüpft erste Meile (MIV / Fahrrad) mit der schnellsten ÖPNV-Hauptstrecke.
-      </p>
+    <!-- Left Sidebar Search Panel -->
+    <aside class="search-sidebar glass-panel">
+      <div class="sidebar-header">
+        <h1>Routenplaner</h1>
+        <p class="subtitle">1. Meile + ÖPNV-Hauptstrecke verknüpfen</p>
+      </div>
 
       <form id="route-planner-form">
         <!-- Start Location -->
         <div class="form-group">
-          <label for="origin-input">📍 Startstandort (Erste Meile)</label>
+          <label for="origin-input">📍 Start (1. Meile)</label>
           <div class="input-with-btn">
-            <input type="text" id="origin-input" class="form-control" placeholder="z. B. 36, Thomas-Mann-Straße, Roßdorf oder Adresse" required />
-            <button type="button" class="btn btn-outline" id="voice-search-btn" title="Spracheingabe">🎙️</button>
+            <input type="text" id="origin-input" class="form-control" placeholder="Startadresse oder Ort eingeben..." required />
+            <button type="button" class="btn-icon" id="voice-search-btn" title="Spracheingabe">🎙️</button>
           </div>
           <div id="origin-autocomplete" class="autocomplete-container"></div>
         </div>
 
         <!-- Destination Location -->
         <div class="form-group">
-          <label for="dest-input">🏁 Zielstandort</label>
-          <input type="text" id="dest-input" class="form-control" placeholder="z. B. Mainz Hbf, Bahnhofplatz" required />
+          <label for="dest-input">🏁 Ziel</label>
+          <input type="text" id="dest-input" class="form-control" placeholder="Zielbahnhof oder Adresse..." required />
           <div id="dest-autocomplete" class="autocomplete-container"></div>
         </div>
 
-        <!-- Mode Preference Selection -->
+        <!-- Mode Segmented Control -->
         <div class="form-group">
-          <label>Präferenz (Erste Meile + Öffis)</label>
+          <label>Fortbewegung (1. Meile)</label>
           <div class="mode-segmented-control" id="mode-selector">
-            <button type="button" class="mode-btn active" data-mode="smart">
-              <span>✨ Smart</span>
-            </button>
-            <button type="button" class="mode-btn" data-mode="car_pt">
-              <span>🚗 Auto</span>
-            </button>
-            <button type="button" class="mode-btn" data-mode="bike_pt">
-              <span>🚲 Rad</span>
-            </button>
-            <button type="button" class="mode-btn" data-mode="walk_pt">
-              <span>🚶 Fuß</span>
-            </button>
+            <button type="button" class="mode-btn active" data-mode="smart">✨ Smart</button>
+            <button type="button" class="mode-btn" data-mode="car_pt">🚗 Auto</button>
+            <button type="button" class="mode-btn" data-mode="bike_pt">🚲 Rad</button>
+            <button type="button" class="mode-btn" data-mode="walk_pt">🚶 Fuß</button>
           </div>
         </div>
 
-        <!-- Options: Traffic & Weather -->
-        <div class="form-group" style="margin-top: 12px;">
-          <label class="toggle-switch" style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; cursor: pointer;">
+        <!-- Options: Traffic -->
+        <div class="form-group checkbox-group">
+          <label class="toggle-switch">
             <input type="checkbox" id="traffic-toggle" checked />
-            <span>🚗 Live-Verkehr & Stau auf der 1. Meile einberechnen</span>
+            <span>🚗 Live-Verkehr & Stau einberechnen</span>
           </label>
         </div>
 
-        <button type="submit" class="btn btn-primary btn-block" id="calculate-btn" style="margin-top: 8px;">
-          🔍 Intermodale Route berechnen
+        <button type="submit" class="btn btn-primary btn-block" id="calculate-btn">
+          Route berechnen
         </button>
       </form>
 
       <!-- Quick Preset Selection -->
-      <div class="presets-section" style="margin-top: 16px;">
-        <label style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted);">Schnell-Auswahl Beispiele:</label>
+      <div class="presets-section">
+        <span class="presets-label">Schnellauswahl:</span>
         <div class="presets-row" id="presets-container"></div>
       </div>
     </aside>
@@ -137,33 +110,33 @@
         <div id="leaflet-map-container"></div>
       </div>
 
-      <!-- Executive KPI Dashboard Overview -->
+      <!-- Overview KPI Cards -->
       <div id="overview-dashboard"></div>
 
-      <!-- Side-by-Side Mode Comparison Cards -->
+      <!-- Mode Comparison Cards -->
       <div id="comparison-cards"></div>
 
-      <!-- Detailed Step-by-Step Timeline -->
+      <!-- Step-by-Step Timeline -->
       <div id="timeline-section"></div>
 
-      <!-- Live Station Departures Board -->
+      <!-- Station Departure Board -->
       <div id="departure-board-section"></div>
 
-      <!-- Action Buttons Row -->
-      <div class="actions-row" style="display: flex; gap: 12px; margin-top: 10px;">
-        <button class="btn btn-outline" id="open-cost-modal">💰 Spar-Rechner (Jahresersparnis)</button>
-        <button class="btn btn-outline" id="save-route-btn">⭐ Route speichern</button>
-        <button class="btn btn-outline" id="export-calendar-btn">📅 In Kalender eintragen (.ics)</button>
+      <!-- Bottom Actions Bar -->
+      <div class="actions-row">
+        <button class="btn btn-outline btn-sm" id="open-cost-modal">💰 Spar-Rechner</button>
+        <button class="btn btn-outline btn-sm" id="save-route-btn">⭐ Route speichern</button>
+        <button class="btn btn-outline btn-sm" id="export-calendar-btn">📅 In Kalender eintragen</button>
       </div>
     </section>
   </main>
 
   <!-- App Footer -->
   <footer class="app-footer">
-    <div>Park & Ride / Bike & Ride Calculator &copy; 2026 | Modern Intermodal Routing Engine</div>
+    <span>Park & Ride / Bike & Ride Calculator &copy; 2026</span>
     <div class="system-status-badge" id="footer-system-status">
       <span class="status-dot dot-green"></span>
-      <span>System-Status: 100% (Operational)</span>
+      <span>System Status: 100% Operational</span>
     </div>
   </footer>
 

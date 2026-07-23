@@ -15,14 +15,17 @@ import { renderCostCalculatorModal } from './components/costCalculatorModal.js';
 import { authService } from './services/authService.js';
 import { storageService } from './services/storageService.js';
 import { downloadCalendarEvent } from './utils/calendarExport.js';
+import { nominatimApi } from './services/api/nominatimApi.js';
 
 class App {
   constructor() {
     this.mapManager = new MapManager('leaflet-map-container');
     this.currentRoute = null;
-    this.originCoords = { lat: 49.8550, lng: 8.7520 }; // Default Roßdorf b. Darmstadt
+    this.originCoords = { lat: 49.8550, lng: 8.7520 }; // Default Roßdorf
     this.destCoords = { lat: 50.0010, lng: 8.2590 };  // Default Mainz Hbf
     this.selectedMode = 'smart';
+    this.lastResolvedOrigin = "";
+    this.lastResolvedDest = "";
   }
 
   init() {
@@ -36,13 +39,19 @@ class App {
     setupAutocomplete(
       document.getElementById('origin-input'),
       document.getElementById('origin-autocomplete'),
-      (loc) => { this.originCoords = loc.coords; }
+      (loc) => { 
+        this.originCoords = loc.coords; 
+        this.lastResolvedOrigin = loc.displayName;
+      }
     );
 
     setupAutocomplete(
       document.getElementById('dest-input'),
       document.getElementById('dest-autocomplete'),
-      (loc) => { this.destCoords = loc.coords; }
+      (loc) => { 
+        this.destCoords = loc.coords; 
+        this.lastResolvedDest = loc.displayName;
+      }
     );
 
     setupVoiceSearch(
@@ -71,9 +80,17 @@ class App {
     
     document.getElementById('origin-input').value = defaultOrigin;
     document.getElementById('dest-input').value = defaultDest;
+    this.lastResolvedOrigin = defaultOrigin;
+    this.lastResolvedDest = defaultDest;
 
     // 0ms Instant Pre-calculated Route
-    this.currentRoute = intermodalEngine.getInstantInitialRoute(this.selectedMode);
+    this.currentRoute = intermodalEngine.getInstantInitialRoute(
+      this.selectedMode,
+      defaultOrigin,
+      defaultDest,
+      this.originCoords,
+      this.destCoords
+    );
     this.renderAllViews();
   }
 
@@ -86,16 +103,18 @@ class App {
       document.getElementById('comparison-cards'),
       (newMode) => {
         this.selectedMode = newMode;
-        this.recalculateInstant();
+        this.recalculateCurrentMode();
       }
     );
     renderTimeline(this.currentRoute, document.getElementById('timeline-section'));
     renderDepartureBoard(this.currentRoute.hubName, document.getElementById('departure-board-section'));
   }
 
-  recalculateInstant() {
-    this.currentRoute = intermodalEngine.getInstantInitialRoute(this.selectedMode);
-    this.renderAllViews();
+  recalculateCurrentMode() {
+    this.executeRouting(
+      document.getElementById('origin-input').value,
+      document.getElementById('dest-input').value
+    );
   }
 
   renderPresets() {
@@ -117,6 +136,8 @@ class App {
           document.getElementById('dest-input').value = preset.destinationName;
           this.originCoords = preset.originCoords;
           this.destCoords = preset.destinationCoords;
+          this.lastResolvedOrigin = preset.originName;
+          this.lastResolvedDest = preset.destinationName;
           this.executeRouting(preset.originName, preset.destinationName);
         }
       });
@@ -131,7 +152,7 @@ class App {
         modeBtns.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         this.selectedMode = btn.getAttribute('data-mode');
-        this.recalculateInstant();
+        this.recalculateCurrentMode();
       });
     });
 
@@ -146,7 +167,7 @@ class App {
     // Traffic Toggle
     document.getElementById('traffic-toggle')?.addEventListener('change', (e) => {
       this.mapManager.toggleTraffic(e.target.checked);
-      this.recalculateInstant();
+      this.recalculateCurrentMode();
     });
 
     // Outdoor Mode Toggle
@@ -231,7 +252,7 @@ class App {
     if (!isSilentBackground) {
       if (calcBtn) {
         calcBtn.disabled = true;
-        calcBtn.innerHTML = `⌛ Route wird berechnet...`;
+        calcBtn.innerHTML = `Berechne...`;
       }
       if (loadingBanner) {
         loadingBanner.style.display = 'flex';
@@ -239,6 +260,23 @@ class App {
     }
 
     try {
+      // Dynamic Geocoding Disambiguation if user typed custom text without clicking autocomplete
+      if (originName && originName !== this.lastResolvedOrigin) {
+        const originResults = await nominatimApi.searchLocations(originName);
+        if (originResults && originResults.length > 0) {
+          this.originCoords = { lat: originResults[0].lat, lng: originResults[0].lng };
+          this.lastResolvedOrigin = originName;
+        }
+      }
+
+      if (destName && destName !== this.lastResolvedDest) {
+        const destResults = await nominatimApi.searchLocations(destName);
+        if (destResults && destResults.length > 0) {
+          this.destCoords = { lat: destResults[0].lat, lng: destResults[0].lng };
+          this.lastResolvedDest = destName;
+        }
+      }
+
       const freshRoute = await intermodalEngine.calculateIntermodalRoute({
         originCoords: this.originCoords,
         originName,
@@ -256,7 +294,7 @@ class App {
       if (!isSilentBackground) {
         if (calcBtn) {
           calcBtn.disabled = false;
-          calcBtn.innerHTML = `🔍 Intermodale Route berechnen`;
+          calcBtn.innerHTML = `Route berechnen`;
         }
         if (loadingBanner) {
           loadingBanner.style.display = 'none';
@@ -292,8 +330,8 @@ class App {
     if (user) {
       container.innerHTML = `
         <div style="display: flex; gap: 8px; align-items: center;">
-          <span style="font-size: 0.85rem; font-weight: 600;">👤 ${user.name}</span>
-          <button class="btn btn-xs btn-outline" id="header-logout-btn">Abmelden</button>
+          <span style="font-size: 0.78rem; font-weight: 500;">👤 ${user.name}</span>
+          <button class="nav-btn" id="header-logout-btn">Abmelden</button>
         </div>
       `;
 
@@ -303,7 +341,7 @@ class App {
       });
     } else {
       container.innerHTML = `
-        <button class="btn btn-primary btn-sm" id="header-login-btn">🔑 Anmelden</button>
+        <button class="nav-btn" id="header-login-btn">🔑 Anmelden</button>
       `;
       container.querySelector('#header-login-btn')?.addEventListener('click', () => {
         this.openAuthModal();
