@@ -1,0 +1,16 @@
+{
+  "name": "Park & Ride / Bike & Ride Calculator",
+  "short_name": "P+R / B+R Planer",
+  "description": "Intermodale Routenplanung: Auto/Fahrrad + Öffentliche Verkehrsmittel",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0b0f19",
+  "theme_color": "#8b5cf6",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

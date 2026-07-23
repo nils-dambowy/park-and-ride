@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  pr-calculator:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: park_ride_calculator_app
+    ports:
+      - "8080:80"
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
